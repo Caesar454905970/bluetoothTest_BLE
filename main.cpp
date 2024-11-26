@@ -51,7 +51,7 @@ std::wstring GuidToString(const winrt::guid& g) {
     return oss.str();
 }
 
-`/**
+/**
  * 处理特性值变化的回调
  * @param characteristic
  * @param args
