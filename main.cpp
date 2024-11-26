@@ -51,7 +51,11 @@ std::wstring GuidToString(const winrt::guid& g) {
     return oss.str();
 }
 
-// 处理特性值变化的回调
+`/**
+ * 处理特性值变化的回调
+ * @param characteristic
+ * @param args
+ */
 void OnCharacteristicValueChanged(const GattCharacteristic& characteristic, const GattValueChangedEventArgs& args) {
 //    std::wcout << L"Notification received for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
 
@@ -74,7 +78,10 @@ void OnCharacteristicValueChanged(const GattCharacteristic& characteristic, cons
 
 }
 
-// 启用特性通知
+/**
+ * 启用特性通知
+ * @param characteristic
+ */
 void EnableNotifications(const GattCharacteristic& characteristic) {
     // 检查特性是否支持通知
     if ((characteristic.CharacteristicProperties() & GattCharacteristicProperties::Notify) == GattCharacteristicProperties::Notify) {
@@ -159,7 +166,10 @@ void PrintCharacteristics(const GattDeviceService& service) {
     }
 }
 
-// 打印服务列表
+/**
+ * 打印服务列表
+ * @param device
+ */
 void PrintGattServices(BluetoothLEDevice device) {
     std::wcout << L"Connected to device: " << device.Name().c_str() << std::endl;
     auto result = device.GetGattServicesAsync().get();
@@ -178,7 +188,9 @@ void PrintGattServices(BluetoothLEDevice device) {
     }
 }
 
-// 启动设备扫描并连接到目标设备
+/**
+ * 启动设备扫描并连接到目标设备
+ */
 void StartDeviceScanning() {
     BluetoothLEAdvertisementWatcher watcher;
     watcher.ScanningMode(BluetoothLEScanningMode::Active);
