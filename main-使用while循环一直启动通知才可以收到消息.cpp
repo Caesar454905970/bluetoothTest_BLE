@@ -53,24 +53,24 @@ std::wstring GuidToString(const winrt::guid& g) {
 
 // 处理特性值变化的回调
 void OnCharacteristicValueChanged(const GattCharacteristic& characteristic, const GattValueChangedEventArgs& args) {
-//    std::wcout << L"Notification received for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
+    std::wcout << L"Notification received for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
 
     // 获取接收到的值
     IBuffer buffer = args.CharacteristicValue();
     const uint8_t* data = buffer.data();
     uint32_t length = buffer.Length();
 
-//    // 打印接收到的数据
-//    for (uint32_t i = 0; i < length; ++i) {
-//        std::wcout << L"Data byte: " << (int)data[i] << std::endl;
-//    }
+    // 打印接收到的数据
+    for (uint32_t i = 0; i < length; ++i) {
+        std::wcout << L"Data byte: " << (int)data[i] << std::endl;
+    }
 
     // 打印接收到的数据（16进制格式）
 //    std::wcout << L"Received Data (Hex format): ";
     for (uint32_t i = 0; i < length; ++i) {
         std::wcout << std::hex << std::setw(2) << std::setfill(L'0') << (int)data[i] << L" ";
     }
-    std::wcout << std::endl;
+
 
 }
 
@@ -78,46 +78,22 @@ void OnCharacteristicValueChanged(const GattCharacteristic& characteristic, cons
 void EnableNotifications(const GattCharacteristic& characteristic) {
     // 检查特性是否支持通知
     if ((characteristic.CharacteristicProperties() & GattCharacteristicProperties::Notify) == GattCharacteristicProperties::Notify) {
-
-
-
-
-        // 启用通知
-        auto result = characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                GattClientCharacteristicConfigurationDescriptorValue::Notify
-        ).get();
-
-        if (result == GattCommunicationStatus::Success) {
-            std::wcout << L"Notifications enabled for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
-
-//            while (true){
-                // 订阅特性值变化事件
-//                characteristic.ValueChanged({ OnCharacteristicValueChanged });
-//            }
-
-        } else {
-            std::wcout << L"Failed to enable notifications for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
-        }
-
-
-        // 订阅特性值变化事件，只需订阅一次
+        // 订阅特性值变化事件
         characteristic.ValueChanged({ OnCharacteristicValueChanged });
-        // 保持连接，等待事件触发
-        std::wcout << L"Waiting for notifications..." << std::endl;
-//        std::this_thread::sleep_for(std::chrono::minutes(5));  // 等待一段时间，保持主线程运行
 
 
-/*running 是一个布尔值，当你需要退出程序时，可以将其设置为 false，从而退出循环*/
-//        while (running) {
-//            std::this_thread::sleep_for(std::chrono::seconds(1));  // 每秒钟检查一次
-//            // 可以在这里添加一些定期检查的逻辑
-//        }
+        while (true){
+            // 启用通知
+            auto result = characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                    GattClientCharacteristicConfigurationDescriptorValue::Notify
+            ).get();
 
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));  // 每秒钟等待一次，保持主线程运行
+            if (result == GattCommunicationStatus::Success) {
+                std::wcout << L"Notifications enabled for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
+            } else {
+                std::wcout << L"Failed to enable notifications for characteristic UUID: " << GuidToString(characteristic.Uuid()) << std::endl;
+            }
         }
-
-
 
     } else {
         std::wcout << L"Characteristic UUID " << GuidToString(characteristic.Uuid()) << L" does not support notifications." << std::endl;
